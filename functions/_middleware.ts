@@ -4,7 +4,6 @@ interface ENV {
   BASIC_AUTH_USERNAME: string;
   BASIC_AUTH_PASSWORD: string;
 }
-export const runtime = "edge";
 
 export const onRequest: PagesFunction<ENV> = async (context) => {
   if (context.env.BASIC_AUTH_IS_ENABLED !== "1") {
