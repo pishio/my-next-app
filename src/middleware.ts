@@ -5,12 +5,13 @@ interface ENV {
 }
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   if (process.env.BASIC_AUTH_IS_ENABLED !== "1") {
-    return NextResponse.rewrite(url);
+    return NextResponse.next();
   }
-  if (!url.pathname.startsWith("/")) return;
 
   const basicAuth = req.headers.get("authorization");
 
@@ -25,7 +26,10 @@ export function middleware(req: NextRequest) {
       return NextResponse.next();
     }
   }
-  url.pathname = "/api/auth";
 
-  return NextResponse.rewrite(url);
+  return NextResponse.json({
+    message: "Basic Auth Required.",
+    status: 401,
+    headers: { "WWW-authenticate": 'Basic realm="Secure Area"' },
+  });
 }
