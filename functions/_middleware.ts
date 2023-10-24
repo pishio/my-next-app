@@ -1,3 +1,4 @@
+import { PagesFunction, Response } from "@cloudflare/workers-types";
 interface ENV {
   BASIC_AUTH_IS_ENABLED: string;
   BASIC_AUTH_USERNAME: string;
