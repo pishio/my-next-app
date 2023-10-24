@@ -11,7 +11,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const basicAuth = req.headers.get("authorization");
+  const basicAuth = req.headers.get("Authorization");
 
   if (basicAuth) {
     const authValue = basicAuth.split(" ")[1];
