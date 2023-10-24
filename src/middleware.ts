@@ -5,8 +5,6 @@ interface ENV {
 }
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   if (process.env.BASIC_AUTH_IS_ENABLED !== "1") {
