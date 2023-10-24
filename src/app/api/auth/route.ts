@@ -1,7 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextRequest } from "next/server";
 
-export default function handler(_: NextApiRequest, res: NextApiResponse) {
-  res.setHeader("WWW-authenticate", 'Basic realm="Secure Area"');
-  res.statusCode = 401;
-  res.end(`Basic Auth Required.`);
+export const runtime = "edge";
+export async function GET(request: NextRequest) {
+  return new Response("Basic Auth Required.", {
+    status: 401,
+    headers: { "WWW-authenticate": 'Basic realm="Secure Area"' },
+  });
 }
