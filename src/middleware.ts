@@ -5,16 +5,27 @@ interface ENV {
 }
 import { NextRequest, NextResponse } from "next/server";
 
+const unauthorizedResponse = function (body: string) {
+  return new Response(body, {
+    status: 401,
+    headers: {
+      "WWW-Authenticate": 'Basic realm="User Visible Realm"',
+    },
+  });
+};
+
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   if (process.env.BASIC_AUTH_IS_ENABLED !== "1") {
     return NextResponse.next();
   }
 
-  const basicAuth = req.headers.get("Authorization");
+  const authorization =
+    req.headers.get("authorization") || req.headers.get("Authorization");
+  if (!authorization) return unauthorizedResponse("Unauthorized");
 
-  if (basicAuth) {
-    const authValue = basicAuth.split(" ")[1];
+  if (authorization) {
+    const authValue = authorization.split(" ")[1];
     const [user, pwd] = Buffer.from(authValue, "base64").toString().split(":");
 
     if (
@@ -22,12 +33,8 @@ export function middleware(req: NextRequest) {
       pwd === process.env.BASIC_AUTH_PASSWORD
     ) {
       return NextResponse.next();
+    } else {
+      return unauthorizedResponse("Unauthorized");
     }
   }
-
-  return NextResponse.json({
-    message: "Basic Auth Required.",
-    status: 401,
-    headers: { "WWW-authenticate": 'Basic realm="Secure Area"' },
-  });
 }
